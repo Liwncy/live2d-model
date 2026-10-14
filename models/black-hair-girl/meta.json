@@ -1,0 +1,16 @@
+{
+  "name": "黑长直少女",
+  "cubismVersion": 5,
+  "author": "Liwncy",
+  "license": "待确认",
+  "licenseUrl": "",
+  "source": "由 psd2live 自动绑定生成（立绘为参考图衍生的原创二次元形象）",
+  "redistributable": true,
+  "tags": [
+    "original",
+    "auto-rigged",
+    "psd2live",
+    "anime"
+  ],
+  "notes": "自动生成：图层由图像分割拆解，绑定/物理/动作由 psd2live 3.4.5 生成。损失报告为空（losses: []）。注意确认立绘参考来源的授权范围。"
+}

@@ -6,11 +6,40 @@
     "pinned": "https://cdn.jsdelivr.net/gh/Liwncy/live2d-model@<tag|commit>",
     "cacheNote": "@main 分支引用缓存 12 小时，覆盖同名文件后 CDN 不会立刻更新；tag 与 commit 为永久缓存。要发布固定版本请打 tag 后用 @tag 引用。"
   },
-  "generatedAt": "2026-10-14T07:25:35.629Z",
+  "generatedAt": "2026-10-14T07:59:26.797Z",
   "stats": {
-    "models": 0,
-    "files": 0,
-    "bytes": 0
+    "models": 1,
+    "files": 10,
+    "bytes": 5620249
   },
-  "models": []
+  "models": [
+    {
+      "id": "black-hair-girl",
+      "name": "黑长直少女",
+      "cubismVersion": 5,
+      "author": "Liwncy",
+      "license": "待确认",
+      "licenseUrl": "",
+      "source": "由 psd2live 自动绑定生成（立绘为参考图衍生的原创二次元形象）",
+      "tags": [
+        "original",
+        "auto-rigged",
+        "psd2live",
+        "anime"
+      ],
+      "path": "models/black-hair-girl",
+      "entry": "models/black-hair-girl/black-hair-girl.model3.json",
+      "files": {
+        "total": 10,
+        "bytes": 5620249,
+        "textures": 1,
+        "motions": 4,
+        "expressions": 0,
+        "physics": true,
+        "pose": false,
+        "displayInfo": true
+      },
+      "url": "https://cdn.jsdelivr.net/gh/Liwncy/live2d-model@main/models/black-hair-girl/black-hair-girl.model3.json"
+    }
+  ]
 }
