@@ -1,0 +1,27 @@
+# 默认：文本文件统一 LF，避免跨平台提交产生整文件 diff
+* text=auto eol=lf
+
+# ---------------------------------------------------------------------------
+# Live2D 二进制资源
+# moc3 / 贴图 是二进制，标记 binary 后 git 不参与 diff、merge、行尾转换。
+# 单个 moc3 通常几百 KB ~ 2MB，贴图受 model3.json 的 FileReferences 控制。
+# ---------------------------------------------------------------------------
+*.moc3 binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.wav  binary
+*.mp3  binary
+*.ogg  binary
+
+# ---------------------------------------------------------------------------
+# 模型清单与动作数据是 JSON，保持文本以便 review 和 diff
+# ---------------------------------------------------------------------------
+*.model3.json   text eol=lf
+*.motion3.json  text eol=lf
+*.physics3.json text eol=lf
+*.pose3.json    text eol=lf
+*.exp3.json     text eol=lf
+*.cdi3.json     text eol=lf
+*.userdata3.json text eol=lf

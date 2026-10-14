@@ -1,0 +1,11 @@
+{
+  "name": "模型显示名",
+  "cubismVersion": null,
+  "author": "原作者 / 版权方",
+  "license": "许可名称",
+  "licenseUrl": "许可全文链接",
+  "source": "模型获取来源链接",
+  "redistributable": false,
+  "tags": ["标签1", "标签2"],
+  "notes": "备注：授权范围、使用限制、修改说明等"
+}

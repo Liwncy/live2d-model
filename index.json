@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "repository": "Liwncy/live2d-model",
+  "cdn": {
+    "base": "https://cdn.jsdelivr.net/gh/Liwncy/live2d-model",
+    "pinned": "https://cdn.jsdelivr.net/gh/Liwncy/live2d-model@<tag|commit>",
+    "cacheNote": "@main 分支引用缓存 12 小时，覆盖同名文件后 CDN 不会立刻更新；tag 与 commit 为永久缓存。要发布固定版本请打 tag 后用 @tag 引用。"
+  },
+  "generatedAt": "2026-10-14T07:25:35.629Z",
+  "stats": {
+    "models": 0,
+    "files": 0,
+    "bytes": 0
+  },
+  "models": []
+}
