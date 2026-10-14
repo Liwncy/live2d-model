@@ -3,6 +3,8 @@
     "Meta": {
         "Duration": 12.0,
         "Fps": 30.0,
+        "FadeInTime": 1.0,
+        "FadeOutTime": 1.0,
         "Loop": true,
         "AreBeziersRestricted": true,
         "CurveCount": 9,
@@ -92,7 +94,7 @@
                 11.200064,
                 0.23737226,
                 11.600032,
-                -0.000111869434,
+                0.0,
                 12.0,
                 0.0
             ]

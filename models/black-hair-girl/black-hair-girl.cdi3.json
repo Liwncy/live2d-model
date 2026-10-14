@@ -17,31 +17,6 @@
 			"Name": "角度 Z"
 		},
 		{
-			"Id": "ParamBodyAngleX",
-			"GroupId": "ParamGroupBody",
-			"Name": "身体角度 X"
-		},
-		{
-			"Id": "ParamBodyAngleY",
-			"GroupId": "ParamGroupBody",
-			"Name": "身体角度 Y"
-		},
-		{
-			"Id": "ParamBodyAngleZ",
-			"GroupId": "ParamGroupBody",
-			"Name": "身体角度 Z"
-		},
-		{
-			"Id": "ParamBodyLean",
-			"GroupId": "ParamGroupBody",
-			"Name": "身体前后倾"
-		},
-		{
-			"Id": "ParamProportion",
-			"GroupId": "ParamGroupBody",
-			"Name": "大小变（头身比）"
-		},
-		{
 			"Id": "ParamEyeLOpen",
 			"GroupId": "ParamGroupEyes",
 			"Name": "左眼开合"
@@ -85,6 +60,31 @@
 			"Id": "ParamMouthOpenY",
 			"GroupId": "ParamGroupMouth",
 			"Name": "嘴巴开合"
+		},
+		{
+			"Id": "ParamBodyAngleX",
+			"GroupId": "ParamGroupBody",
+			"Name": "身体角度 X"
+		},
+		{
+			"Id": "ParamBodyAngleY",
+			"GroupId": "ParamGroupBody",
+			"Name": "身体角度 Y"
+		},
+		{
+			"Id": "ParamBodyAngleZ",
+			"GroupId": "ParamGroupBody",
+			"Name": "身体角度 Z"
+		},
+		{
+			"Id": "ParamBodyLean",
+			"GroupId": "ParamGroupBody",
+			"Name": "身体前后倾"
+		},
+		{
+			"Id": "ParamProportion",
+			"GroupId": "ParamGroupBody",
+			"Name": "大小变（头身比）"
 		},
 		{
 			"Id": "ParamBreath",
