@@ -184,18 +184,6 @@
 			"Name": "front_hair"
 		},
 		{
-			"Id": "ArtMeshEyeClose",
-			"Name": "eye_close"
-		},
-		{
-			"Id": "ArtMeshEyelash",
-			"Name": "eyelash"
-		},
-		{
-			"Id": "ArtMeshIrides",
-			"Name": "irides"
-		},
-		{
 			"Id": "ArtMeshEyewhite",
 			"Name": "eyewhite"
 		},

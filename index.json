@@ -6,11 +6,11 @@
     "pinned": "https://cdn.jsdelivr.net/gh/Liwncy/live2d-model@<tag|commit>",
     "cacheNote": "@main 分支引用缓存 12 小时，覆盖同名文件后 CDN 不会立刻更新；tag 与 commit 为永久缓存。要发布固定版本请打 tag 后用 @tag 引用。"
   },
-  "generatedAt": "2026-10-15T03:58:22.049Z",
+  "generatedAt": "2026-10-15T06:14:02.338Z",
   "stats": {
     "models": 2,
-    "files": 23,
-    "bytes": 14060079
+    "files": 22,
+    "bytes": 12738821
   },
   "models": [
     {
@@ -59,9 +59,9 @@
       "path": "models/xiao-congminger",
       "entry": "models/xiao-congminger/xiao-congminger.model3.json",
       "files": {
-        "total": 12,
-        "bytes": 7354228,
-        "textures": 3,
+        "total": 11,
+        "bytes": 6032970,
+        "textures": 2,
         "motions": 4,
         "expressions": 0,
         "physics": true,
