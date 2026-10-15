@@ -3,8 +3,8 @@
   "FileReferences": {
     "Moc": "black-hair-girl.moc3",
     "Textures": [
-      "black-hair-girl.4096/texture_00.png",
-      "black-hair-girl.4096/texture_01.png"
+      "black-hair-girl-4096/texture_00.png",
+      "black-hair-girl-4096/texture_01.png"
     ],
     "Physics": "black-hair-girl.physics3.json",
     "DisplayInfo": "black-hair-girl.cdi3.json",
