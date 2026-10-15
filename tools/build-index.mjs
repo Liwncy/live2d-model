@@ -66,6 +66,15 @@ function detectRepoSlug() {
   return null;
 }
 
+/** meta.order：数字越小越靠前；缺省或非法值返回 null，生成时排到最后 */
+function readOrder(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim() !== '' && Number.isFinite(Number(value))) {
+    return Number(value);
+  }
+  return null;
+}
+
 /** 从 moc3 二进制头部读 Cubism 版本（魔数 MOC3 + 1 字节版本号） */
 async function readMoc3Version(mocPath) {
   try {
@@ -103,21 +112,39 @@ async function buildModelEntry(dirName) {
   const relDir = path.posix.join('models', dirName);
   const entries = await readdir(absDir, { withFileTypes: true });
 
-  // ---- 1. 入口文件（缺了照收，只是条目不带加载入口）----
+  // ---- 1. 入口文件（Cubism3 的 *.model3.json 或 Cubism2 的 *.model.json；缺了照收）----
   const model3Name = entries
-    .filter((e) => e.isFile() && e.name.endsWith('.model3.json'))
+    .filter((e) => e.isFile() && (e.name.endsWith('.model3.json') || e.name.endsWith('.model.json')))
     .map((e) => e.name)
     .sort()[0] ?? null;
 
   if (!model3Name) {
-    warn(`${relDir}: 没有 *.model3.json 入口，仍会收录，但条目不带加载入口`);
+    warn(`${relDir}: 没有 *.model3.json / *.model.json 入口，仍会收录，但条目不带加载入口`);
   }
 
   let refs = {};
   if (model3Name) {
     try {
-      const model3 = JSON.parse(await readFile(path.join(absDir, model3Name), 'utf8'));
-      refs = model3.FileReferences ?? {};
+      const settings = JSON.parse(await readFile(path.join(absDir, model3Name), 'utf8'));
+      if (settings.FileReferences) {
+        refs = settings.FileReferences;                    // Cubism 3/4
+      } else {
+        refs = {                                           // Cubism 2
+          Moc: settings.model,
+          Textures: settings.textures,
+          Physics: settings.physics,
+          Pose: settings.pose,
+          Motions: Object.fromEntries(
+            Object.entries(settings.motions ?? {}).map(([k, v]) => [
+              k,
+              (Array.isArray(v) ? v : []).map((m) => ({ File: m?.file ?? m?.File })),
+            ]),
+          ),
+          Expressions: (settings.expressions ?? []).map((e) => ({
+            File: typeof e === 'string' ? e : e?.file ?? e?.File,
+          })),
+        };
+      }
     } catch (err) {
       warn(`${relDir}/${model3Name}: JSON 解析失败 — ${err.message}`);
     }
@@ -168,10 +195,15 @@ async function buildModelEntry(dirName) {
     meta.cubismVersion ?? (mocPath ? await readMoc3Version(mocPath) : null) ?? null;
 
   const entryPath = model3Name ? path.posix.join(relDir, model3Name) : null;
+  const order = readOrder(meta.order);
+  if (meta.order != null && meta.order !== '' && order === null) {
+    warn(`${relDir}/${META_FILE}: order 需要是数字，已忽略`);
+  }
 
   return {
     id: dirName,
     name: meta.name ?? dirName,
+    order,
     cubismVersion,
     author: meta.author ?? null,
     license: meta.license ?? null,
@@ -242,6 +274,13 @@ async function main() {
     );
     console.log('');
   }
+
+  models.sort((a, b) => {
+    const ao = a.order ?? Number.POSITIVE_INFINITY;
+    const bo = b.order ?? Number.POSITIVE_INFINITY;
+    if (ao !== bo) return ao - bo;
+    return a.id.localeCompare(b.id);
+  });
 
   if (totalBytes > MAX_REPO_BYTES) {
     warn(`模型总体积 ${mb(totalBytes)} 超过 jsDelivr 仓库上限 ${mb(MAX_REPO_BYTES)}`);

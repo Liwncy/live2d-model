@@ -1,0 +1,9 @@
+{
+  "type": "Live2D Model Setting",
+  "name": "nuoya-3018",
+  "model": "nuoya-3018.moc",
+  "textures": [
+    "nuoya-3018.512/texture_00.png",
+    "nuoya-3018.512/texture_01.png"
+  ]
+}
