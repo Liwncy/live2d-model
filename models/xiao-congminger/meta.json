@@ -1,0 +1,17 @@
+{
+  "name": "小聪明儿",
+  "cubismVersion": 5,
+  "author": "Liwncy",
+  "license": "待确认",
+  "licenseUrl": "",
+  "source": "由 psd2live 自动绑定生成（立绘为参考图衍生的原创二次元形象）",
+  "redistributable": true,
+  "tags": [
+    "original",
+    "auto-rigged",
+    "psd2live",
+    "anime",
+    "full-body"
+  ],
+  "notes": "自动生成：图层由图像分割拆解为 14 层（脸/颈/眼白/虹膜/睫毛/eye_close/前后发/上衣/短裤/左右腿/左右脚），绑定、物理、动作由 psd2live 3.4.5 生成，导出损失报告为空（losses: []）。含参数 20+ 个、物理 2 组、动作 4 个（Idle/Blink/Nod/Shake），已声明 EyeBlink 与 LipSync 参数组。已验证：眨眼（EyeLOpen/R）、眼球追踪（EyeBallX/Y）、头部旋转（AngleX/Y/Z）、身体旋转（BodyAngleZ）均有真实形变。已知不足：① 眉毛与刘海连成一片，拆不出独立眉毛图层，ParamBrowL/RY 无形变；② 嘴唇留在脸皮层里，没有独立 mouth_open 图层，ParamMouthOpenY 无形变；③ 转头角度过大时脸部网格会有可见拉伸，这是单张平面图自动绑定的固有代价。另需确认：立绘参考来源的授权范围。"
+}

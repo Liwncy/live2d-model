@@ -1,0 +1,52 @@
+{
+  "Version": 3,
+  "FileReferences": {
+    "Moc": "xiao-congminger.moc3",
+    "Textures": [
+      "xiao-congminger.4096/texture_00.png",
+      "xiao-congminger.4096/texture_01.png",
+      "xiao-congminger.4096/texture_02.png"
+    ],
+    "Physics": "xiao-congminger.physics3.json",
+    "DisplayInfo": "xiao-congminger.cdi3.json",
+    "Motions": {
+      "Idle": [
+        {
+          "File": "xiao-congminger.idle.motion3.json"
+        }
+      ],
+      "Blink": [
+        {
+          "File": "xiao-congminger.blink.motion3.json"
+        }
+      ],
+      "Nod": [
+        {
+          "File": "xiao-congminger.nod.motion3.json"
+        }
+      ],
+      "Shake": [
+        {
+          "File": "xiao-congminger.shake.motion3.json"
+        }
+      ]
+    }
+  },
+  "Groups": [
+    {
+      "Target": "Parameter",
+      "Name": "EyeBlink",
+      "Ids": [
+        "ParamEyeLOpen",
+        "ParamEyeROpen"
+      ]
+    },
+    {
+      "Target": "Parameter",
+      "Name": "LipSync",
+      "Ids": [
+        "ParamMouthOpenY"
+      ]
+    }
+  ]
+}
