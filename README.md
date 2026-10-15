@@ -2,8 +2,6 @@
 
 Live2D 模型库。每个模型一个独立目录，通过 jsDelivr 提供稳定直链，可直接被网页、看板娘组件、机器人项目引用。
 
-**只收录可自由再分发的模型。** 官方示例模型、游戏拆包模型、来源不明的模型一律不收 —— 这条底线由 `tools/build-index.mjs` 自动把关（见下方「红线」）。
-
 模型清单位于 [`index.json`](./index.json)，机器可读，可直接 fetch 使用。
 
 ---
@@ -73,7 +71,7 @@ console.log(pick[0].url);
 ├── models/
 │   ├── README.md           # 添加模型的完整规范
 │   └── <id>/               # 一个完整模型
-│       ├── meta.json       # 元数据与许可声明（必填）
+│       ├── meta.json       # 元数据（可选）
 │       ├── <id>.model3.json
 │       ├── <id>.moc3
 │       └── ...
@@ -91,14 +89,13 @@ node tools/build-index.mjs                   # 3. 校验 + 生成索引
 git add models/my-model index.json && git commit -m "feat: add my-model"
 ```
 
-`meta.json` 里 **`redistributable` 必须显式写 `true`**，否则脚本拒绝收录。字段细则见 [`models/README.md`](./models/README.md)。
+`meta.json` 为**可选**元数据文件，不写也能收录（缺省用目录名当显示名）。字段细则见 [`models/README.md`](./models/README.md)。
 
-## 红线（脚本自动校验）
+## 校验项（脚本自动校验）
 
-`node tools/build-index.mjs` 每次都会检查，任何一条不过就报错退出、且该模型不会进入 `index.json`：
+`node tools/build-index.mjs` 每次都会检查以下**技术项**，不过则报错退出、该模型不进入 `index.json`（都是链接可用性的硬要求，与内容/许可无关）：
 
 - 缺 `*.model3.json` 入口 → 拒绝
-- 缺 `meta.json`，或 `redistributable` 不为 `true` → 拒绝
 - `model3.json` 引用的文件实际不存在 → 拒绝
 - 单文件 > 20MB → 拒绝（jsDelivr 不服务，直链直接失效）
 - 模型总体积 > 150MB → 警告（jsDelivr 单仓库默认上限）
@@ -129,7 +126,7 @@ https://raw.githubusercontent.com/Liwncy/live2d-model/main/models/<id>/<id>.mode
 
 - `tools/` 下的脚本以 [MIT](./LICENSE) 授权。
 - **`models/` 下的模型文件不属于 MIT 许可**，各自遵循其原许可 —— 见每个模型目录的 `meta.json`（`license` / `licenseUrl` / `source`）。使用前请自行确认授权范围。
-- 本仓库不收录不可再分发的模型。若你是某个模型的版权方并希望它被移除，请开 issue。
+- 模型文件的权利归各自权利人所有。若你是某个模型的版权方并希望它被移除，请开 issue。
 
 ## 致谢
 

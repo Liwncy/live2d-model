@@ -8,13 +8,14 @@
  *
  * 零依赖，Node 18+。
  *
- * 校验项：
+ * 校验项（均为链接可用性的技术要求，不做内容/许可门槛）：
  *   1. 每个模型目录必须有 *.model3.json 入口
  *   2. model3.json 里引用的文件必须真实存在
- *   3. 必须有 meta.json，且 redistributable 不能为 false
- *   4. 单文件不得超过 jsDelivr 的 20MB 上限
- *   5. 全仓库模型总体积不得超过 jsDelivr 的 150MB 上限
- *   6. --check 模式下，index.json 必须与 models/ 当前状态一致
+ *   3. 单文件不得超过 jsDelivr 的 20MB 上限
+ *   4. 全仓库模型总体积不得超过 jsDelivr 的 150MB 上限
+ *   5. --check 模式下，index.json 必须与 models/ 当前状态一致
+ *
+ * meta.json 为可选元数据；缺失时自动用目录名等默认值生成条目，不做任何许可/来源限制。
  */
 
 import { readdir, readFile, stat, writeFile } from 'node:fs/promises';
@@ -129,29 +130,19 @@ async function buildModelEntry(dirName) {
   }
   const refs = model3.FileReferences ?? {};
 
-  // ---- 2. meta.json（合规凭证）----
+  // ---- 2. meta.json（可选元数据，不做许可 / 来源门槛）----
   const metaPath = path.join(absDir, META_FILE);
-  if (!existsSync(metaPath)) {
-    fail(`${relDir}: 缺少 ${META_FILE}，无法确认来源与许可`);
-    return null;
+  let meta = {};
+  if (existsSync(metaPath)) {
+    try {
+      meta = JSON.parse(await readFile(metaPath, 'utf8'));
+    } catch (err) {
+      fail(`${relDir}/${META_FILE}: JSON 解析失败 — ${err.message}`);
+      return null;
+    }
   }
 
-  let meta;
-  try {
-    meta = JSON.parse(await readFile(metaPath, 'utf8'));
-  } catch (err) {
-    fail(`${relDir}/${META_FILE}: JSON 解析失败 — ${err.message}`);
-    return null;
-  }
-
-  if (meta.redistributable !== true) {
-    fail(`${relDir}: meta.redistributable 必须显式写 true，本仓库只收可自由再分发的模型`);
-    return null;
-  }
-  if (!meta.license) warn(`${relDir}: meta.license 未填写`);
-  if (!meta.source) warn(`${relDir}: meta.source 未填写`);
-
-  // ---- 3. 引用的文件是否存在 + 体积红线 ----
+  // ---- 3. 引用的文件是否存在 + 体积限额 ----
   const referenced = collectRefs(refs);
   for (const rel of referenced) {
     if (!existsSync(path.join(absDir, rel))) {
@@ -184,7 +175,7 @@ async function buildModelEntry(dirName) {
   const cubismVersion =
     meta.cubismVersion ?? (mocPath ? await readMoc3Version(mocPath) : null) ?? null;
 
-  // 本模型只要出过任何一个错误，就不收录 —— index.json 里给出的链接必须全部可用
+  // 本模型只要出过任何一个错误，就不写入索引 —— index.json 里给出的链接必须全部可用
   if (errors.length > errorsBefore) return null;
 
   const entryPath = path.posix.join(relDir, model3Name);

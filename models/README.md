@@ -6,7 +6,7 @@
 
 ```
 models/<id>/
-├── meta.json              # 必填 —— 本仓库的元数据与许可声明
+├── meta.json              # 可选 —— 本仓库的元数据
 ├── <id>.model3.json       # 必填 —— 加载入口，运行时从这个文件开始读
 ├── <id>.moc3              # 必填 —— 模型二进制数据
 ├── <id>.physics3.json     # 物理演算（头发 / 裙摆摆动）
@@ -24,19 +24,19 @@ models/<id>/
 
 ## meta.json
 
-照抄 `../tools/meta.template.json` 改。字段说明：
+可选文件。不写也能被收录（`index.json` 里显示名缺省用目录名、其余字段为 `null`）。
+照抄 `../tools/meta.template.json` 改。字段说明（**全部可选**）：
 
-| 字段 | 必填 | 说明 |
-|---|---|---|
-| `redistributable` | **是** | 必须显式写 `true`。写 `false` 或漏写，脚本直接拒绝收录 |
-| `license` | 是 | 许可名称，如 `CC BY 4.0` / `MIT` / 作者自定条款名 |
-| `licenseUrl` | 否 | 许可全文链接，有就填 |
-| `source` | 是 | 从哪拿到的，尽量给原始链接 |
-| `author` | 否 | 原作者 / 版权方 |
-| `name` | 否 | 显示名，缺省用目录名 |
-| `cubismVersion` | 否 | 不填则脚本自动读 moc3 头部识别；识别不出再手填 |
-| `tags` | 否 | 检索标签 |
-| `notes` | 否 | 授权范围、修改说明等备注 |
+| 字段 | 说明 |
+|---|---|
+| `license` | 许可名称，如 `CC BY 4.0` / `MIT` / 作者自定条款名 |
+| `licenseUrl` | 许可全文链接 |
+| `source` | 从哪拿到的，尽量给原始链接 |
+| `author` | 原作者 / 版权方 |
+| `name` | 显示名，缺省用目录名 |
+| `cubismVersion` | 不填则脚本自动读 moc3 头部识别；识别不出再手填 |
+| `tags` | 检索标签 |
+| `notes` | 说明、修改记录等备注 |
 
 ## 添加一个模型
 
@@ -45,11 +45,11 @@ models/<id>/
 mkdir -p models/my-model
 # 把 Live2D 导出的模型文件整个拷进来
 
-# 2. 写 meta.json
+# 2.（可选）写 meta.json
 cp tools/meta.template.json models/my-model/meta.json
-# 编辑它，把 redistributable 改成 true，填上 license / source / author
+# 编辑它，填上 license / source / author 等描述信息（都不写也能收录）
 
-# 3. 生成索引（会校验引用完整性、体积上限、许可字段）
+# 3. 生成索引（会校验入口、引用完整性、体积上限）
 node tools/build-index.mjs
 
 # 4. 提交
@@ -57,8 +57,7 @@ git add models/my-model index.json
 git commit -m "feat: add my-model"
 ```
 
-## 硬性红线
+## 注意事项
 
-- **`redistributable: false` 一律不收**。官方示例模型、游戏拆包模型、来源不明的模型都过不了这一关。
 - **单文件不得超过 20MB**，**全库模型总体积不得超过 150MB**。超了 jsDelivr 不服务，直链直接失效。
-- 模型里不能有任何私密信息（真实姓名、内网地址、token 之类）—— 这个仓库是公开的，任何人拿到 URL 就能访问。
+- 模型里不要放私密信息（真实姓名、内网地址、token 之类）—— 这个仓库是公开的，任何人拿到 URL 就能访问。

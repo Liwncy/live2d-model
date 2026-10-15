@@ -1,11 +1,10 @@
 {
-  "name": "模型显示名",
+  "name": "模型显示名（可选，缺省用目录名）",
   "cubismVersion": null,
-  "author": "原作者 / 版权方",
-  "license": "许可名称",
-  "licenseUrl": "许可全文链接",
-  "source": "模型获取来源链接",
-  "redistributable": false,
+  "author": "原作者 / 版权方（可选）",
+  "license": "许可名称（可选）",
+  "licenseUrl": "许可全文链接（可选）",
+  "source": "模型获取来源链接（可选）",
   "tags": ["标签1", "标签2"],
-  "notes": "备注：授权范围、使用限制、修改说明等"
+  "notes": "备注：说明、修改记录等（可选）"
 }
