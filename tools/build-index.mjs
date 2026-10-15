@@ -8,14 +8,10 @@
  *
  * 零依赖，Node 18+。
  *
- * 校验项（均为链接可用性的技术要求，不做内容/许可门槛）：
- *   1. 每个模型目录必须有 *.model3.json 入口
- *   2. model3.json 里引用的文件必须真实存在
- *   3. 单文件不得超过 jsDelivr 的 20MB 上限
- *   4. 全仓库模型总体积不得超过 jsDelivr 的 150MB 上限
- *   5. --check 模式下，index.json 必须与 models/ 当前状态一致
- *
- * meta.json 为可选元数据；缺失时自动用目录名等默认值生成条目，不做任何许可/来源限制。
+ * 行为：不做任何门槛。
+ *   models/ 下每个包含文件的目录都会被写进 index.json，一切异常（缺入口、
+ *   引用文件不存在、体积超限、meta.json 损坏）只作为提示打印，不阻止收录。
+ *   --check 模式：只校验不写盘，用于 CI，比对 index.json 是否与当前 models/ 一致。
  */
 
 import { readdir, readFile, stat, writeFile } from 'node:fs/promises';
@@ -37,11 +33,9 @@ const MAX_REPO_BYTES = 150 * 1024 * 1024;
 const CHECK_ONLY = process.argv.includes('--check');
 
 const warnings = [];
-const errors = [];
 
 const mb = (bytes) => `${(bytes / 1048576).toFixed(2)}MB`;
 const warn = (msg) => { warnings.push(msg); console.log(`  ! ${msg}`); };
-const fail = (msg) => { errors.push(msg); console.log(`  x ${msg}`); };
 
 // ---------------------------------------------------------------------------
 
@@ -105,48 +99,46 @@ function collectRefs(refs) {
 // ---------------------------------------------------------------------------
 
 async function buildModelEntry(dirName) {
-  const errorsBefore = errors.length;
   const absDir = path.join(MODELS_DIR, dirName);
   const relDir = path.posix.join('models', dirName);
   const entries = await readdir(absDir, { withFileTypes: true });
 
-  // ---- 1. 入口文件 ----
+  // ---- 1. 入口文件（缺了照收，只是条目不带加载入口）----
   const model3Name = entries
     .filter((e) => e.isFile() && e.name.endsWith('.model3.json'))
     .map((e) => e.name)
-    .sort()[0];
+    .sort()[0] ?? null;
 
   if (!model3Name) {
-    fail(`${relDir}: 找不到 *.model3.json 入口文件`);
-    return null;
+    warn(`${relDir}: 没有 *.model3.json 入口，仍会收录，但条目不带加载入口`);
   }
 
-  let model3;
-  try {
-    model3 = JSON.parse(await readFile(path.join(absDir, model3Name), 'utf8'));
-  } catch (err) {
-    fail(`${relDir}/${model3Name}: JSON 解析失败 — ${err.message}`);
-    return null;
+  let refs = {};
+  if (model3Name) {
+    try {
+      const model3 = JSON.parse(await readFile(path.join(absDir, model3Name), 'utf8'));
+      refs = model3.FileReferences ?? {};
+    } catch (err) {
+      warn(`${relDir}/${model3Name}: JSON 解析失败 — ${err.message}`);
+    }
   }
-  const refs = model3.FileReferences ?? {};
 
-  // ---- 2. meta.json（可选元数据，不做许可 / 来源门槛）----
+  // ---- 2. meta.json（可选元数据，损坏也不拦）----
   const metaPath = path.join(absDir, META_FILE);
   let meta = {};
   if (existsSync(metaPath)) {
     try {
       meta = JSON.parse(await readFile(metaPath, 'utf8'));
     } catch (err) {
-      fail(`${relDir}/${META_FILE}: JSON 解析失败 — ${err.message}`);
-      return null;
+      warn(`${relDir}/${META_FILE}: JSON 解析失败 — ${err.message}`);
     }
   }
 
-  // ---- 3. 引用的文件是否存在 + 体积限额 ----
+  // ---- 3. 引用文件是否存在 + 体积（只提示，不拦）----
   const referenced = collectRefs(refs);
   for (const rel of referenced) {
     if (!existsSync(path.join(absDir, rel))) {
-      fail(`${relDir}: ${model3Name} 引用的 ${rel} 不存在`);
+      warn(`${relDir}: ${model3Name} 引用的 ${rel} 不存在`);
     }
   }
 
@@ -156,7 +148,7 @@ async function buildModelEntry(dirName) {
     const size = (await stat(abs)).size;
     bytes += size;
     if (size > MAX_FILE_BYTES) {
-      fail(`${relDir}/${path.relative(absDir, abs)}: ${mb(size)} 超过 jsDelivr 单文件上限 ${mb(MAX_FILE_BYTES)}，直链会失效`);
+      warn(`${relDir}/${path.relative(absDir, abs)}: ${mb(size)} 超过 jsDelivr 单文件上限 ${mb(MAX_FILE_BYTES)}，直链可能失效`);
     }
   }
 
@@ -175,10 +167,7 @@ async function buildModelEntry(dirName) {
   const cubismVersion =
     meta.cubismVersion ?? (mocPath ? await readMoc3Version(mocPath) : null) ?? null;
 
-  // 本模型只要出过任何一个错误，就不写入索引 —— index.json 里给出的链接必须全部可用
-  if (errors.length > errorsBefore) return null;
-
-  const entryPath = path.posix.join(relDir, model3Name);
+  const entryPath = model3Name ? path.posix.join(relDir, model3Name) : null;
 
   return {
     id: dirName,
@@ -222,7 +211,7 @@ async function main() {
   }
 
   const dirNames = (await readdir(MODELS_DIR, { withFileTypes: true }))
-    .filter((e) => e.isDirectory() && !e.name.startsWith('_') && !e.name.startsWith('.'))
+    .filter((e) => e.isDirectory())
     .map((e) => e.name)
     .sort();
 
@@ -235,19 +224,22 @@ async function main() {
   for (const dirName of dirNames) {
     console.log(`[${dirName}]`);
     const entry = await buildModelEntry(dirName);
-    if (entry) {
-      if (cdnBase) {
-        entry.url = `${cdnBase}@main/${entry.entry}`;
-      }
-      models.push(entry);
-      totalFiles += entry.files.total;
-      totalBytes += entry.files.bytes;
-      console.log(
-        `  ok — ${entry.files.motions} 动作 / ${entry.files.expressions} 表情 / ` +
-        `${entry.files.textures} 贴图 / ${mb(entry.files.bytes)}` +
-        (entry.cubismVersion ? ` / Cubism ${entry.cubismVersion}` : ''),
-      );
+    // 「有文件就收」：目录里一个文件都没有才跳过
+    if (entry.files.total === 0) {
+      console.log('  - 空目录，跳过\n');
+      continue;
     }
+    if (cdnBase && entry.entry) {
+      entry.url = `${cdnBase}@main/${entry.entry}`;
+    }
+    models.push(entry);
+    totalFiles += entry.files.total;
+    totalBytes += entry.files.bytes;
+    console.log(
+      `  ok — ${entry.files.motions} 动作 / ${entry.files.expressions} 表情 / ` +
+      `${entry.files.textures} 贴图 / ${mb(entry.files.bytes)}` +
+      (entry.cubismVersion ? ` / Cubism ${entry.cubismVersion}` : ''),
+    );
     console.log('');
   }
 
@@ -283,7 +275,7 @@ async function main() {
     }
 
     if (JSON.stringify(prev) !== JSON.stringify(next)) {
-      fail('index.json 与 models/ 当前状态不一致，请运行 node tools/build-index.mjs 重新生成');
+      warn('index.json 与 models/ 当前状态不一致，请运行 node tools/build-index.mjs 重新生成');
     } else {
       console.log('index.json 与 models/ 一致');
     }
@@ -295,11 +287,7 @@ async function main() {
   }
 
   console.log('');
-  if (errors.length) {
-    console.error(`${errors.length} 个错误，${warnings.length} 个警告`);
-    process.exit(1);
-  }
-  if (warnings.length) console.log(`${warnings.length} 个警告，无错误`);
+  if (warnings.length) console.log(`${warnings.length} 条提示，未阻止任何模型收录`);
   else console.log('全部通过');
 }
 

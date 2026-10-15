@@ -49,7 +49,7 @@ mkdir -p models/my-model
 cp tools/meta.template.json models/my-model/meta.json
 # 编辑它，填上 license / source / author 等描述信息（都不写也能收录）
 
-# 3. 生成索引（会校验入口、引用完整性、体积上限）
+# 3. 生成索引（有文件就收，不会因任何原因拒绝收录）
 node tools/build-index.mjs
 
 # 4. 提交
@@ -57,7 +57,8 @@ git add models/my-model index.json
 git commit -m "feat: add my-model"
 ```
 
-## 注意事项
+## 收录规则与注意事项
 
-- **单文件不得超过 20MB**，**全库模型总体积不得超过 150MB**。超了 jsDelivr 不服务，直链直接失效。
+- **有文件就收、什么都不拦**：`models/` 下每个非空目录都会进 `index.json`。缺 `*.model3.json` 入口、引用文件不存在、`meta.json` 缺失或损坏、体积超限，一律只打印提示，不阻止收录。
+- **单文件 > 20MB、全库 > 150MB** 会有提示（jsDelivr 可能不服务，直链失效），但不会被拦。
 - 模型里不要放私密信息（真实姓名、内网地址、token 之类）—— 这个仓库是公开的，任何人拿到 URL 就能访问。

@@ -91,14 +91,14 @@ git add models/my-model index.json && git commit -m "feat: add my-model"
 
 `meta.json` 为**可选**元数据文件，不写也能收录（缺省用目录名当显示名）。字段细则见 [`models/README.md`](./models/README.md)。
 
-## 校验项（脚本自动校验）
+## 收录规则
 
-`node tools/build-index.mjs` 每次都会检查以下**技术项**，不过则报错退出、该模型不进入 `index.json`（都是链接可用性的硬要求，与内容/许可无关）：
+`node tools/build-index.mjs` **不做任何门槛**：`models/` 下每个包含文件的目录都会被写进 `index.json`（空目录除外）。一切异常只打印提示，**不阻止任何模型收录**：
 
-- 缺 `*.model3.json` 入口 → 拒绝
-- `model3.json` 引用的文件实际不存在 → 拒绝
-- 单文件 > 20MB → 拒绝（jsDelivr 不服务，直链直接失效）
-- 模型总体积 > 150MB → 警告（jsDelivr 单仓库默认上限）
+- 缺 `*.model3.json` 入口 → 仍收录，条目的 `entry` 为 `null`
+- `model3.json` 引用的文件不存在 → 仅提示
+- 单文件 > 20MB、全库 > 150MB → 仅提示（超出后 jsDelivr 直链可能失效）
+- `meta.json` 缺失或损坏 → 仅提示，用目录名等默认值生成条目
 
 `--check` 模式只校验不写盘，并额外检查 `index.json` 是否为最新，用于 CI：
 
