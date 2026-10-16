@@ -6,11 +6,11 @@
     "pinned": "https://cdn.jsdelivr.net/gh/Liwncy/live2d-model@<tag|commit>",
     "cacheNote": "@main 分支引用缓存 12 小时，覆盖同名文件后 CDN 不会立刻更新；tag 与 commit 为永久缓存。要发布固定版本请打 tag 后用 @tag 引用。"
   },
-  "generatedAt": "2026-10-15T09:28:12.090Z",
+  "generatedAt": "2026-10-16T03:45:04.274Z",
   "stats": {
-    "models": 3,
-    "files": 36,
-    "bytes": 12948197
+    "models": 4,
+    "files": 50,
+    "bytes": 13426036
   },
   "models": [
     {
@@ -100,6 +100,35 @@
         "displayInfo": false
       },
       "url": "https://cdn.jsdelivr.net/gh/Liwncy/live2d-model@main/models/nuoya-3018/nuoya-3018.model.json"
+    },
+    {
+      "id": "xcmer",
+      "name": "小聪明儿（xcmer）",
+      "order": null,
+      "cubismVersion": 2,
+      "author": "基于《诺亚幻想》3018 改色派生",
+      "license": "游戏提取资源派生，权利归原权利方",
+      "licenseUrl": "",
+      "source": "由 models/nuoya-3018 换皮派生（改色：银发→黑发、蓝绿校服/深蓝裙→白色系）",
+      "tags": [
+        "original",
+        "reskin",
+        "cubism2",
+        "loli"
+      ],
+      "path": "models/xcmer",
+      "entry": "models/xcmer/xcmer.model.json",
+      "files": {
+        "total": 14,
+        "bytes": 477839,
+        "textures": 2,
+        "motions": 0,
+        "expressions": 0,
+        "physics": false,
+        "pose": false,
+        "displayInfo": false
+      },
+      "url": "https://cdn.jsdelivr.net/gh/Liwncy/live2d-model@main/models/xcmer/xcmer.model.json"
     }
   ]
 }

@@ -1,0 +1,10 @@
+{
+  "name": "小聪明儿（xcmer）",
+  "cubismVersion": 2,
+  "author": "基于《诺亚幻想》3018 改色派生",
+  "license": "游戏提取资源派生，权利归原权利方",
+  "licenseUrl": "",
+  "source": "由 models/nuoya-3018 换皮派生（改色：银发→黑发、蓝绿校服/深蓝裙→白色系）",
+  "tags": ["original", "reskin", "cubism2", "loli"],
+  "notes": "换皮派生模型：仅重绘贴图配色，几何与 UV 未改，绑定/动作沿用原模型 nuoya-3018。改动：① 头发 银→黑（保留明暗渐变）；② 服装 蓝绿校服+深蓝百褶裙 → 白色系；③ 鞋 蓝→白。Cubism 2 格式，加载需 Cubism 2 运行时；配置未挂 motions（见 nuoya-3018 说明），motions/ 下 9 个表情动作保留。"
+}
