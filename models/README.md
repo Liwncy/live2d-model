@@ -6,7 +6,7 @@
 
 ```
 models/<id>/
-├── meta.json              # 显示名、顺序、版本、标签
+├── meta.json              # 必需，没有就不进清单
 ├── <id>.model3.json       # 加载入口
 ├── <id>.moc3              # 模型数据
 ├── <id>.physics3.json     # 物理（头发、衣服摆动）
@@ -23,13 +23,12 @@ models/<id>/
 
 ## meta.json
 
-字段都可选，照 `../tools/meta.template.json` 改：
+**必须有 `meta.json`，没有的目录会被跳过。** 照 `../tools/meta.template.json` 改：
 
 | 字段 | 说明 |
 |---|---|
 | `name` | 显示名 |
 | `order` | 清单顺序，数字越小越靠前；不写就排在后面 |
-| `cubismVersion` | 一般不用写；moc3 会读头部自动识别，Cubism 2 的 `.moc` 要手写 |
 | `tags` | 检索标签 |
 
 ## 添加
@@ -38,7 +37,7 @@ models/<id>/
 mkdir -p models/my-model
 # 把模型文件拷进来
 
-cp tools/meta.template.json models/my-model/meta.json   # 可选
+cp tools/meta.template.json models/my-model/meta.json
 
 node tools/build-index.mjs
 ```

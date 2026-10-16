@@ -48,7 +48,7 @@ console.log(pick[0].url);
 | 字段 | 说明 |
 |---|---|
 | `id` / `name` / `order` | 目录名 / 显示名 / 顺序（小的在前） |
-| `cubismVersion` | Cubism 版本；moc3 会读头部自动识别，Cubism 2 的 `.moc` 要手写 |
+| `cubismVersion` | Cubism 版本，脚本自动识别 |
 | `tags` | 检索标签 |
 | `entry` / `url` | 仓库内路径 / CDN 直链 |
 | `files` | 文件数、体积、贴图 / 动作 / 表情数量 |
@@ -63,7 +63,7 @@ console.log(pick[0].url);
 ├── models/
 │   ├── README.md
 │   └── <id>/
-│       ├── meta.json       # 可选
+│       ├── meta.json       # 必需，没有就不进清单
 │       ├── <id>.model3.json
 │       ├── <id>.moc3
 │       └── ...
@@ -76,12 +76,12 @@ console.log(pick[0].url);
 
 ```bash
 mkdir -p models/my-model
-cp tools/meta.template.json models/my-model/meta.json   # 可选
+cp tools/meta.template.json models/my-model/meta.json
 node tools/build-index.mjs
 git add models/my-model index.json && git commit -m "feat: add my-model"
 ```
 
-把模型文件放进 `models/<id>/` 即可。字段见 [`models/README.md`](./models/README.md)。
+模型文件放进 `models/<id>/`，再写一个 `meta.json`——**没有 `meta.json` 的目录不会被收录**。字段见 [`models/README.md`](./models/README.md)。
 
 `node tools/build-index.mjs --check` 只核对 `index.json` 是否和 `models/` 一致，不写文件。
 

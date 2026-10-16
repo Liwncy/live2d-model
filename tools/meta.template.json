@@ -1,6 +1,5 @@
 {
   "name": "显示名（不写就用目录名）",
   "order": 0,
-  "cubismVersion": null,
   "tags": ["标签1", "标签2"]
 }

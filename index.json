@@ -6,11 +6,11 @@
     "pinned": "https://cdn.jsdelivr.net/gh/Liwncy/live2d-model@<tag|commit>",
     "cacheNote": "@main 分支引用缓存 12 小时，覆盖同名文件后 CDN 不会立刻更新；tag 与 commit 为永久缓存。要发布固定版本请打 tag 后用 @tag 引用。"
   },
-  "generatedAt": "2026-10-16T06:54:01.479Z",
+  "generatedAt": "2026-10-16T07:20:33.225Z",
   "stats": {
     "models": 2,
     "files": 28,
-    "bytes": 951449
+    "bytes": 951394
   },
   "models": [
     {
@@ -28,7 +28,7 @@
       "entry": "models/nuoya-3018/nuoya-3018.model.json",
       "files": {
         "total": 14,
-        "bytes": 474261,
+        "bytes": 474239,
         "textures": 2,
         "motions": 0,
         "expressions": 0,
@@ -40,7 +40,7 @@
     },
     {
       "id": "xcmer",
-      "name": "小聪明儿（xcmer）",
+      "name": "小聪明儿",
       "order": 2,
       "cubismVersion": 2,
       "tags": [
@@ -52,7 +52,7 @@
       "entry": "models/xcmer/xcmer.model.json",
       "files": {
         "total": 14,
-        "bytes": 477188,
+        "bytes": 477155,
         "textures": 2,
         "motions": 0,
         "expressions": 0,

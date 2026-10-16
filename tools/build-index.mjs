@@ -8,10 +8,10 @@
  *
  * 零依赖，Node 18+。
  *
- * 行为：不做任何门槛。
- *   models/ 下每个包含文件的目录都会被写进 index.json，一切异常（缺入口、
- *   引用文件不存在、体积超限、meta.json 损坏）只作为提示打印，不阻止收录。
- *   --check 模式：只校验不写盘，用于 CI，比对 index.json 是否与当前 models/ 一致。
+ * 行为：
+ *   models/ 下的目录，**必须有 meta.json 才会进 index.json**，没写的直接跳过。
+ *   其余异常（缺入口、引用文件不存在、体积超限）只作为提示打印，不阻止收录。
+ *   --check 模式：只校验不写盘，比对 index.json 是否与当前 models/ 一致。
  */
 
 import { readdir, readFile, stat, writeFile } from 'node:fs/promises';
@@ -75,7 +75,7 @@ function readOrder(value) {
   return null;
 }
 
-/** 从 moc3 二进制头部读 Cubism 版本（魔数 MOC3 + 1 字节版本号） */
+/** 从 moc3 二进制头部读 moc 版本枚举值（魔数 MOC3 + 1 字节版本号） */
 async function readMoc3Version(mocPath) {
   try {
     const fd = await readFile(mocPath);
@@ -85,6 +85,27 @@ async function readMoc3Version(mocPath) {
   } catch {
     return null;
   }
+}
+
+/**
+ * moc3 头部那一字节是 Live2D 的「moc 版本」枚举，不是 Cubism 大版本，得换算。
+ * 枚举取值来自 Cubism Core：
+ *   MocVersion_30=1  MocVersion_33=2  MocVersion_40=3  MocVersion_42=4  MocVersion_50=5
+ */
+const MOC3_VERSION_TO_CUBISM = { 1: 3, 2: 3, 3: 4, 4: 4, 5: 5 };
+
+/**
+ * 自动判断 Cubism 版本，不需要手写 meta.cubismVersion：
+ *   .moc / Cubism 2 配置 → 2
+ *   .moc3               → 读头部枚举换算成 3 / 4 / 5
+ * 注意：model3.json 里的 Version 字段是「配置格式版本」（各代都写 3），不能当 Cubism 版本用。
+ */
+async function detectCubismVersion(mocPath, isCubism2) {
+  if (isCubism2) return 2;
+  if (mocPath && path.extname(mocPath).toLowerCase() === '.moc') return 2;
+  const raw = mocPath ? await readMoc3Version(mocPath) : null;
+  if (raw == null) return null;
+  return MOC3_VERSION_TO_CUBISM[raw] ?? null;
 }
 
 /** 收集 model3.json 里引用到的所有相对路径 */
@@ -112,23 +133,47 @@ async function buildModelEntry(dirName) {
   const relDir = path.posix.join('models', dirName);
   const entries = await readdir(absDir, { withFileTypes: true });
 
-  // ---- 1. 入口文件（Cubism3 的 *.model3.json 或 Cubism2 的 *.model.json；缺了照收）----
+  // ---- 0. meta.json 是收录前提：没有就不进清单 ----
+  const metaPath = path.join(absDir, META_FILE);
+  if (!existsSync(metaPath)) {
+    warn(`${relDir}: 没有 ${META_FILE}，跳过`);
+    return null;
+  }
+
+  let meta;
+  try {
+    meta = JSON.parse(await readFile(metaPath, 'utf8'));
+  } catch (err) {
+    warn(`${relDir}/${META_FILE}: JSON 解析失败 — ${err.message}，跳过`);
+    return null;
+  }
+
+  // 只有 meta.json、没有模型文件也跳过
+  const allFiles = await walk(absDir);
+  if (allFiles.length <= 1) {
+    warn(`${relDir}: 目录里只有 ${META_FILE}，没有模型文件，跳过`);
+    return null;
+  }
+
+  // ---- 1. 入口文件（Cubism3 的 *.model3.json 或 Cubism2 的 *.model.json）----
   const model3Name = entries
     .filter((e) => e.isFile() && (e.name.endsWith('.model3.json') || e.name.endsWith('.model.json')))
     .map((e) => e.name)
     .sort()[0] ?? null;
 
   if (!model3Name) {
-    warn(`${relDir}: 没有 *.model3.json / *.model.json 入口，仍会收录，但条目不带加载入口`);
+    warn(`${relDir}: 没有 *.model3.json / *.model.json 入口，条目不带加载入口`);
   }
 
   let refs = {};
+  let isCubism2 = false;
   if (model3Name) {
     try {
       const settings = JSON.parse(await readFile(path.join(absDir, model3Name), 'utf8'));
       if (settings.FileReferences) {
-        refs = settings.FileReferences;                    // Cubism 3/4
+        refs = settings.FileReferences;                    // Cubism 3/4/5
       } else {
+        isCubism2 = true;
         refs = {                                           // Cubism 2
           Moc: settings.model,
           Textures: settings.textures,
@@ -150,18 +195,7 @@ async function buildModelEntry(dirName) {
     }
   }
 
-  // ---- 2. meta.json（可选元数据，损坏也不拦）----
-  const metaPath = path.join(absDir, META_FILE);
-  let meta = {};
-  if (existsSync(metaPath)) {
-    try {
-      meta = JSON.parse(await readFile(metaPath, 'utf8'));
-    } catch (err) {
-      warn(`${relDir}/${META_FILE}: JSON 解析失败 — ${err.message}`);
-    }
-  }
-
-  // ---- 3. 引用文件是否存在 + 体积（只提示，不拦）----
+  // ---- 2. 引用文件是否存在 + 体积（只提示，不拦）----
   const referenced = collectRefs(refs);
   for (const rel of referenced) {
     if (!existsSync(path.join(absDir, rel))) {
@@ -169,7 +203,6 @@ async function buildModelEntry(dirName) {
     }
   }
 
-  const allFiles = await walk(absDir);
   let bytes = 0;
   for (const abs of allFiles) {
     const size = (await stat(abs)).size;
@@ -191,8 +224,8 @@ async function buildModelEntry(dirName) {
   );
 
   const mocPath = refs.Moc ? path.join(absDir, refs.Moc) : null;
-  const cubismVersion =
-    meta.cubismVersion ?? (mocPath ? await readMoc3Version(mocPath) : null) ?? null;
+  // 版本自动判断；meta.cubismVersion 只在需要覆盖时手写
+  const cubismVersion = meta.cubismVersion ?? (await detectCubismVersion(mocPath, isCubism2));
 
   const entryPath = model3Name ? path.posix.join(relDir, model3Name) : null;
   const order = readOrder(meta.order);
@@ -252,9 +285,9 @@ async function main() {
   for (const dirName of dirNames) {
     console.log(`[${dirName}]`);
     const entry = await buildModelEntry(dirName);
-    // 「有文件就收」：目录里一个文件都没有才跳过
-    if (entry.files.total === 0) {
-      console.log('  - 空目录，跳过\n');
+    // 没写 meta.json（或只有 meta.json 没模型文件）的目录不进清单
+    if (!entry) {
+      console.log('');
       continue;
     }
     if (cdnBase && entry.entry) {
@@ -322,7 +355,7 @@ async function main() {
   }
 
   console.log('');
-  if (warnings.length) console.log(`${warnings.length} 条提示，未阻止任何模型收录`);
+  if (warnings.length) console.log(`${warnings.length} 条提示`);
   else console.log('全部通过');
 }
 
