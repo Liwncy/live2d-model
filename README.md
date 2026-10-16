@@ -1,8 +1,8 @@
 # live2d-model
 
-自己的 Live2D 模型存放处，也可以用来收录别人的模型。每个模型一个目录，用 jsDelivr 直链给网页、看板娘或机器人加载。
+Live2D 模型库。每个模型一个目录，用 jsDelivr 直链给网页、看板娘或机器人加载。
 
-模型清单位于 [`index.json`](./index.json)，可直接 fetch。
+模型清单在 [`index.json`](./index.json)。
 
 ---
 
@@ -81,7 +81,7 @@ node tools/build-index.mjs
 git add models/my-model index.json && git commit -m "feat: add my-model"
 ```
 
-把导出的模型文件放进 `models/<id>/` 即可。`meta.json` 不写也能进清单，显示名会用目录名。字段见 [`models/README.md`](./models/README.md)。
+把模型文件放进 `models/<id>/` 即可。字段见 [`models/README.md`](./models/README.md)。
 
 `node tools/build-index.mjs --check` 只核对 `index.json` 是否和 `models/` 一致，不写文件。
 
@@ -98,5 +98,3 @@ https://purge.jsdelivr.net/gh/Liwncy/live2d-model@main/<文件路径>
 ```
 https://raw.githubusercontent.com/Liwncy/live2d-model/main/models/<id>/<id>.model3.json
 ```
-
-`tools/` 下的脚本按 [MIT](./LICENSE) 使用。

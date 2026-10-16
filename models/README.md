@@ -1,14 +1,12 @@
 # models/
 
-每个子目录是一个 Live2D 模型。目录名就是模型 `id`，用小写字母和连字符。
-
-放进来的模型都会进 `index.json`。这是自己的模型库，用来存放或收录，没有额外门槛。
+每个子目录是一个 Live2D 模型。目录名就是模型 `id`，用小写字母和连字符。放进来的都会进 `index.json`。
 
 ## 目录里通常有这些文件
 
 ```
 models/<id>/
-├── meta.json              # 可选，显示名、标签、备注
+├── meta.json              # 显示名、顺序、版本、标签
 ├── <id>.model3.json       # 加载入口
 ├── <id>.moc3              # 模型数据
 ├── <id>.physics3.json     # 物理（头发、衣服摆动）
@@ -25,7 +23,7 @@ models/<id>/
 
 ## meta.json
 
-不写也能收录，显示名用目录名。可以照 `../tools/meta.template.json` 改，字段都可选：
+字段都可选，照 `../tools/meta.template.json` 改：
 
 | 字段 | 说明 |
 |---|---|
