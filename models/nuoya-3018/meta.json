@@ -1,10 +1,6 @@
 {
   "name": "诺亚幻想 3018",
+  "order": 1,
   "cubismVersion": 2,
-  "author": "《诺亚幻想》原版权方",
-  "license": "游戏提取资源，权利归原权利方",
-  "licenseUrl": "",
-  "source": "提取自手游《诺亚幻想》；取自参考仓库 Eikanya/Live2d-model（诺亚幻想/3018）",
-  "tags": ["game-rip", "cubism2", "noah-fantasy", "loli"],
-  "notes": "从参考仓库原样移入并规范化命名（model.moc → nuoya-3018.moc，贴图目录 → nuoya-3018.512/）。Cubism 2 格式（.moc + .model.json），加载需 Cubism 2 运行时。motions/ 下保留了 9 个表情动作（normal/happy/smile/sad/angry/shy/surprise/doubtful/close），但配置文件未挂载——pixi-live2d-display 等库声明 Cubism2 motions 后会加载失败，需要挂载时按查看器要求在 .model.json 的 motions 字段自行添加。"
+  "tags": ["game-rip", "cubism2", "noah-fantasy", "loli"]
 }

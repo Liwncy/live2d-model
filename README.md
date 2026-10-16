@@ -48,8 +48,7 @@ console.log(pick[0].url);
 | 字段 | 说明 |
 |---|---|
 | `id` / `name` / `order` | 目录名 / 显示名 / 顺序（小的在前） |
-| `cubismVersion` | Cubism 版本，从 moc3 头部读出 |
-| `author` / `source` / `license` | 作者、来源、许可，写了才有 |
+| `cubismVersion` | Cubism 版本；moc3 会读头部自动识别，Cubism 2 的 `.moc` 要手写 |
 | `tags` | 检索标签 |
 | `entry` / `url` | 仓库内路径 / CDN 直链 |
 | `files` | 文件数、体积、贴图 / 动作 / 表情数量 |

@@ -1,11 +1,6 @@
 {
-  "name": "显示名（可选，缺省用目录名）",
+  "name": "显示名（不写就用目录名）",
   "order": 0,
   "cubismVersion": null,
-  "author": "作者（可选）",
-  "license": "",
-  "licenseUrl": "",
-  "source": "来源或制作说明（可选）",
-  "tags": ["标签1", "标签2"],
-  "notes": "备注（可选）"
+  "tags": ["标签1", "标签2"]
 }

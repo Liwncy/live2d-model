@@ -31,13 +31,8 @@ models/<id>/
 |---|---|
 | `name` | 显示名 |
 | `order` | 清单顺序，数字越小越靠前；不写就排在后面 |
-| `author` | 作者 |
-| `source` | 从哪来的，或自己怎么做的 |
-| `license` | 想记许可就写，不写留空 |
-| `licenseUrl` | 许可链接 |
-| `cubismVersion` | 不填则从 moc3 头部识别 |
+| `cubismVersion` | 一般不用写；moc3 会读头部自动识别，Cubism 2 的 `.moc` 要手写 |
 | `tags` | 检索标签 |
-| `notes` | 备注 |
 
 ## 添加
 
